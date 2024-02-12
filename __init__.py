@@ -14,7 +14,7 @@ def contact():
     return render_template("contact.HTML")
 
 @app.route("/commits/")
-def Graphe():
+def Commits():
     return render_template("commits.html")
 
 @app.route('/')
