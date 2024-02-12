@@ -39,3 +39,10 @@ def commits_per_minute():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+    # Renvoyer les données au modèle HTML pour affichage
+    return render_template('commits.html', minutes=minutes, commit_counts=commit_counts)
+
+if __name__ == '__main__':
+    app.run(debug=True)
