@@ -1,0 +1,41 @@
+from flask import Flask, render_template, jsonify
+import requests
+from datetime import datetime
+
+app = Flask(__name__)
+
+# Fonction pour extraire les minutes à partir d'une chaîne de date
+@app.route('/extract-minutes/<date_string>')
+def extract_minutes(date_string):
+    date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
+    minutes = date_object.minute
+    return jsonify({'minutes': minutes})
+
+# Route pour afficher le nombre de commits par minute
+@app.route('/commits/')
+def commits_per_minute():
+    # Récupérer les données sur les commits depuis l'API GitHub
+    response = requests.get('https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits')
+    data = response.json()
+
+    # Initialiser un dictionnaire pour compter les commits par minute
+    commits_per_minute = {}
+
+    # Parcourir les données sur les commits et compter les commits par minute
+    for commit in data:
+        commit_date = commit['commit']['author']['date']
+        minute = datetime.strptime(commit_date, '%Y-%m-%dT%H:%M:%SZ').minute
+        if minute in commits_per_minute:
+            commits_per_minute[minute] += 1
+        else:
+            commits_per_minute[minute] = 1
+
+    # Créer les données pour le graphique
+    minutes = list(commits_per_minute.keys())
+    commit_counts = list(commits_per_minute.values())
+
+    # Renvoyer les données au modèle HTML pour affichage
+    return render_template('commits.html', minutes=minutes, commit_counts=commit_counts)
+
+if __name__ == '__main__':
+    app.run(debug=True)
