@@ -13,6 +13,10 @@ app = Flask(__name__)
 def contact():
     return render_template("contact.HTML")
 
+@app.route("/commits/")
+def Graphe():
+    return render_template("commits.html")
+
 @app.route('/')
 def hello_world():
     return render_template('hello.html') #comment2
